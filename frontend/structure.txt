@@ -1,0 +1,18 @@
+frontend/
+├── src/
+│   ├── components/      # Composants réutilisables
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   └── ...
+│   ├── pages/          # Pages de l'application
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Dashboard.jsx
+│   │   └── ...
+│   ├── api/            # Configuration API
+│   │   └── axios.js
+│   ├── hooks/          # Custom hooks
+│   ├── utils/          # Fonctions utilitaires
+│   ├── contexts/       # Context API
+│   ├── App.jsx
+│   └── main.jsx
