@@ -1,56 +1,38 @@
-'use client'
-
-import React from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import styles from './Navbar.module.css'
-
-export default function Navbar({ currentPage, onNavigate, userRole, onLogout }) {
-  const { user, logout } = useAuth()
-
-  const handleLogout = () => {
-    logout()
-    onLogout?.()
-  }
-
-  const menuItems = [
-    { label: 'Dashboard', page: 'dashboard', roles: ['admin', 'doctor', 'receptionist'] },
-    { label: 'Patients', page: 'patients', roles: ['admin', 'doctor', 'receptionist'] },
-    { label: 'Rendez-vous', page: 'appointments', roles: ['admin', 'doctor', 'receptionist'] },
-    { label: 'Consultations', page: 'consultations', roles: ['admin', 'doctor'] },
-    { label: 'Facturation', page: 'billing', roles: ['admin', 'receptionist'] },
-    { label: 'Portail Patient', page: 'patient-portal', roles: ['patient'] },
-    { label: 'Paramètres', page: 'settings', roles: ['admin'] },
-  ]
-
-  const visibleItems = menuItems.filter(item => item.roles.includes(user?.role || userRole))
-
-  return (
-    <nav className={styles.navbar}>
-      <div className={styles.container}>
-        <div className={styles.logo}>
-          <span className={styles.icon}>🏥</span>
-          <span className={styles.text}>MedFlow</span>
-        </div>
-
-        <ul className={styles.menu}>
-          {visibleItems.map(item => (
-            <li key={item.page}>
-              <button
-                onClick={() => onNavigate(item.page)}
-                className={`${styles.menuItem} ${currentPage === item.page ? styles.active : ''}`}
-              >
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <div className={styles.userSection}>
-          <span className={styles.userEmail}>{user?.email}</span>
-          <span className={styles.userRole}>{user?.role}</span>
-          <button onClick={handleLogout} className={styles.logoutBtn}>Déconnexion</button>
-        </div>
+<nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
+  <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+    {/* Logo */}
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 bg-gradient-to-br from-blue-900 to-blue-500 rounded-lg flex items-center justify-center">
+        <Heart className="text-white w-6 h-6"/>
       </div>
-    </nav>
-  )
-}
+      <span className="text-2xl font-bold text-blue-900 tracking-tight">MediFlow</span>
+    </div>
+
+    {/* Menu desktop */}
+    <div className="hidden md:flex items-center gap-10">
+      <a href="#accueil" className="text-gray-700 font-medium hover:text-blue-700 transition">Accueil</a>
+      <a href="#services" className="text-gray-700 font-medium hover:text-blue-700 transition">Services</a>
+      <a href="#medecins" className="text-gray-700 font-medium hover:text-blue-700 transition">Médecins</a>
+      <a href="#contact" className="text-gray-700 font-medium hover:text-blue-700 transition">Contact</a>
+      <button className="bg-gradient-to-br from-blue-900 to-blue-500 text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition">
+        Prendre RDV <ArrowRight className="w-5 h-5"/>
+      </button>
+    </div>
+
+    {/* Menu mobile button */}
+    <button className="md:hidden text-gray-700">
+      {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
+    </button>
+  </div>
+
+  {/* Mobile Menu */}
+  {mobileMenuOpen && (
+    <div className="md:hidden bg-white px-6 py-4 border-t border-gray-200 flex flex-col gap-3">
+      <a href="#accueil" className="text-gray-700 font-medium">Accueil</a>
+      <a href="#services" className="text-gray-700 font-medium">Services</a>
+      <a href="#medecins" className="text-gray-700 font-medium">Médecins</a>
+      <a href="#contact" className="text-gray-700 font-medium">Contact</a>
+      <button className="bg-gradient-to-br from-blue-900 to-blue-500 text-white py-2 rounded-xl font-semibold mt-2 w-full">Prendre RDV</button>
+    </div>
+  )}
+</nav>

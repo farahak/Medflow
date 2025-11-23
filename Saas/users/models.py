@@ -44,6 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 # Profiles: 1-to-1 relationships with User
 class Medecin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='medecin_profile')
+    first_name = models.CharField(max_length=150)  # du signup
+    last_name = models.CharField(max_length=150)   # du signup
     specialty = models.CharField(max_length=200, blank=True)
     phone = models.CharField(max_length=30, blank=True)
     # add other doctor-specific fields

@@ -24,7 +24,12 @@ class SignupView(generics.CreateAPIView):
         if role == 'patient':
             Patient.objects.create(user=user)
         elif role == 'medecin':
-            Medecin.objects.create(user=user)
+            Medecin.objects.create(
+        user=user,
+        first_name=user.first_name,   # récupère les infos du User
+        last_name=user.last_name,
+        specialty=request.data.get('specialty', '')
+    )
         # receptionists or admin: no profile created here, or create if needed
 
         # create JWT tokens to return right after signup
@@ -51,3 +56,9 @@ class CurrentPatientProfileView(generics.RetrieveAPIView):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("Not a patient")
         return user.patient_profile
+    
+
+class MedecinListView(generics.ListAPIView):
+        queryset = Medecin.objects.all()
+        serializer_class = MedecinProfileSerializer
+        permission_classes = [permissions.AllowAny]

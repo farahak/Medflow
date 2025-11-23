@@ -35,4 +35,4 @@ class Appointment(models.Model):
         ordering = ['start_datetime']
 
     def __str__(self):
-        return f"{self.patient} with {self.medecin} at {self.scheduled_time}"
+        return f"{self.patient} with {self.medecin} at {self.start_datetime}"

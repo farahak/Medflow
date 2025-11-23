@@ -1,141 +1,72 @@
-'use client'
+import React, { useState } from "react";
+import api from "../api/axios.js";
 
-import React, { useState } from 'react'
+export default function Signup() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    first_name: "",
+    last_name: "",
+    role: "patient",
+    specialty: "",
+    phone: "",
+    date_of_birth: ""
+  });
 
-import { useRouter } from 'next/navigation'
-import styles from './Signup.module.css'   // <--- ton fichier CSS
-
-const Signup = () => {
-  const router = useRouter()
-  const { signup, login } = useAuth()
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [role, setRole] = useState('patient')
-
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+
+    // remove empty fields for clean body
+    const body = Object.fromEntries(
+      Object.entries(formData).filter(([_, v]) => v !== "")
+    );
 
     try {
-      // 1️⃣ Signup backend
-      const res = await signup(email, password, firstName, lastName, role)
+      const res = await api.post("users/signup/", body);
 
-      // 2️⃣ Stocker tokens + user
-      const { user, access, refresh } = res
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('access_token', access)
-      localStorage.setItem('refresh_token', refresh)
+      localStorage.setItem("access_token", res.data.access);
+      localStorage.setItem("refresh_token", res.data.refresh);
 
-      // 3️⃣ Redirect
-      router.push('/dashboard')
+      alert("Compte créé !");
+      console.log("Created user:", res.data);
 
     } catch (err) {
-      console.log("Signup error:", err)
-      setError(err.response?.data?.detail || "Signup failed")
-    } finally {
-      setLoading(false)
+      console.log(err);
+      alert("Erreur lors de l'inscription");
     }
-  }
+  };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.loginBox}>
-        
-        {/* Header */}
-        <div className={styles.header}>
-          <span className={styles.icon}>🩺</span>
-          <h1>Create Account</h1>
-          <p>Join our health platform</p>
-        </div>
+    <form onSubmit={handleSubmit}>
+      <input name="email" placeholder="Email" onChange={handleChange} />
+      <input name="password" placeholder="Password" type="password" onChange={handleChange} />
+      <input name="first_name" placeholder="Prénom" onChange={handleChange} />
+      <input name="last_name" placeholder="Nom" onChange={handleChange} />
 
-        {/* Error message */}
-        {error && <div className={styles.error}>{error}</div>}
+      <select name="role" onChange={handleChange}>
+        <option value="patient">Patient</option>
+        <option value="medecin">Médecin</option>
+      </select>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+      {formData.role === "medecin" && (
+        <>
+          <input name="specialty" placeholder="Specialty" onChange={handleChange} />
+          <input name="phone" placeholder="Phone" onChange={handleChange} />
+        </>
+      )}
 
-          <div>
-            <label>First Name</label>
-            <input
-              type="text"
-              required
-              className={styles.select}
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </div>
+      {formData.role === "patient" && (
+        <>
+          <input name="date_of_birth" type="date" onChange={handleChange} />
+          <input name="phone" placeholder="Phone" onChange={handleChange} />
+        </>
+      )}
 
-          <div>
-            <label>Last Name</label>
-            <input
-              type="text"
-              required
-              className={styles.select}
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label>Email</label>
-            <input
-              type="email"
-              required
-              className={styles.select}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              required
-              className={styles.select}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          {/* Role selection */}
-          <div className={styles.roleSelect}>
-            <label>Choose Role</label>
-            <select
-              className={styles.select}
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="patient">Patient</option>
-              <option value="medecin">Médecin</option>
-              <option value="receptionist">Receptionist</option>
-            </select>
-          </div>
-
-          {/* Signup button */}
-          <button
-            type="submit"
-            className={styles.submitBtn}
-            disabled={loading}
-          >
-            {loading ? "Creating account..." : "Sign Up"}
-          </button>
-        </form>
-
-        {/* Test credentials */}
-        <div className={styles.credentials}>
-          <p>You will receive:</p>
-          <small>User + Access Token + Refresh Token</small>
-        </div>
-      </div>
-    </div>
-  )
+      <button type="submit">Créer le compte</button>
+    </form>
+  );
 }
-
-export default Signup

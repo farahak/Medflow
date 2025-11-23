@@ -5,6 +5,8 @@ import { useAuth } from '../contexts/AuthContext'
 import Input from '../components/Input'
 import Button from '../components/Button'
 import styles from './Login.module.css'
+import { useNavigate } from "react-router-dom";
+
 
 export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('')
@@ -12,6 +14,7 @@ export default function Login({ onLoginSuccess }) {
   const [role, setRole] = useState('receptionist')
   const [errors, setErrors] = useState({})
   const { login, loading, isAuthenticated } = useAuth()
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated && onLoginSuccess) {
@@ -25,33 +28,35 @@ export default function Login({ onLoginSuccess }) {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setErrors({})
+  e.preventDefault()
+  setErrors({})
 
-    const newErrors = {}
-    if (!email) {
-      newErrors.email = 'Email requis'
-    } else if (!validateEmail(email)) {
-      newErrors.email = 'Email invalide'
-    }
-    
-    if (!password) {
-      newErrors.password = 'Mot de passe requis'
-    } else if (password.length < 6) {
-      newErrors.password = 'Le mot de passe doit faire au least 6 caractères'
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
-    }
-
-    try {
-      await login(email, password)
-    } catch (error) {
-      setErrors({ form: error.message || 'Identifiants invalides. Veuillez réessayer.' })
-    }
+  const newErrors = {}
+  if (!email) {
+    newErrors.email = 'Email requis'
+  } else if (!validateEmail(email)) {
+    newErrors.email = 'Email invalide'
   }
+
+  if (!password) {
+    newErrors.password = 'Mot de passe requis'
+  } else if (password.length < 6) {
+    newErrors.password = 'Le mot de passe doit faire au least 6 caractères'
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors)
+    return
+  }
+
+  try {
+    await login(email, password)
+    navigate("/appointment")   // ✅ succès
+  } catch (error) {
+    setErrors({ form: error.message || 'Identifiants invalides. Veuillez réessayer.' })
+    navigate("/signup")        // ❌ échec
+  }
+}
 
   const testCredentials = [
     { role: 'admin', email: 'admin@medflow.com' },
@@ -92,19 +97,7 @@ export default function Login({ onLoginSuccess }) {
             required
           />
 
-          <div className={styles.roleSelect}>
-            <label>Rôle</label>
-            <select 
-              value={role} 
-              onChange={(e) => setRole(e.target.value)}
-              className={styles.select}
-            >
-              <option value="admin">Administrateur</option>
-              <option value="doctor">Médecin</option>
-              <option value="receptionist">Réceptionniste</option>
-              <option value="patient">Patient</option>
-            </select>
-          </div>
+         
 
           <Button 
             type="submit" 

@@ -14,5 +14,5 @@ class AppointmentSerializer(serializers.ModelSerializer):
    patient = serializers.PrimaryKeyRelatedField(read_only=True)  # sera assigné automatiquement
    class Meta:
         model = Appointment
-        fields = ('id','medecin','patient','scheduled_time','duration_minutes','reason','status','created_at')
+        fields = ('id','medecin','patient','start_datetime','end_datetime','status','created_at')
         read_only_fields = ('created_at',)
