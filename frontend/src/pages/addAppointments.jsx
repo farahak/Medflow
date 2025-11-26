@@ -46,21 +46,37 @@ export default function Appointment() {
       setMessage('Veuillez sélectionner un médecin et une disponibilité')
       return
     }
+
+    const payload = {
+      medecin: selectedDoctor,
+      start_datetime: selectedAvailability.start_datetime,
+      end_datetime: selectedAvailability.end_datetime,
+      reason
+    }
+
+    console.log('[Appointment] Sending payload:', payload)
+    console.log('[Appointment] Selected doctor:', selectedDoctor)
+    console.log('[Appointment] Selected availability:', selectedAvailability)
+
     try {
-      await api.post('/appointments/appointment/add/', {
-        medecin: selectedDoctor,
-        start_datetime: selectedAvailability.start_datetime,
-        end_datetime: selectedAvailability.end_datetime,
-        reason
-      })
+      const response = await api.post('/appointments/appointment/add/', payload)
+      console.log('[Appointment] Success response:', response.data)
       setMessage('Rendez-vous créé avec succès !')
       setReason('')
       setSelectedAvailability(null)
       setSelectedDoctor(null)
       setAvailabilities([])
     } catch (err) {
-      console.error(err)
-      setMessage(err.response?.data?.detail || 'Erreur lors de la création du rendez-vous')
+      console.error('[Appointment] Error:', err)
+      console.error('[Appointment] Error response:', err.response?.data)
+      console.error('[Appointment] Error status:', err.response?.status)
+
+      // Display the actual error from backend
+      const errorMessage = err.response?.data?.detail ||
+        err.response?.data?.message ||
+        JSON.stringify(err.response?.data) ||
+        'Erreur lors de la création du rendez-vous'
+      setMessage(errorMessage)
     }
   }
 
@@ -78,10 +94,10 @@ export default function Appointment() {
           >
             <option value="">-- Choisir un médecin --</option>
             {doctors.map((doc) => (
-  <option key={doc.id} value={doc.id}>
-    {doc.user.id} 
-  </option>
-))}
+              <option key={doc.id} value={doc.id}>
+                {doc.user.first_name} {doc.user.last_name} - {doc.specialty}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -118,4 +134,4 @@ export default function Appointment() {
       </form>
     </div>
   )
-}    
+}

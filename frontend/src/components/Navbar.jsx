@@ -1,38 +1,78 @@
-<nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
-  <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-    {/* Logo */}
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10 bg-gradient-to-br from-blue-900 to-blue-500 rounded-lg flex items-center justify-center">
-        <Heart className="text-white w-6 h-6"/>
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import './Navbar.css';
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="container">
+        <div className="navbar-content">
+          <Link to="/home" className="navbar-logo">
+            <span>Medflow</span>
+          </Link>
+
+          <div className="navbar-menu">
+            <Link to="/home" className="navbar-link">Accueil</Link>
+            <Link to="/services" className="navbar-link">Services</Link>
+            <Link to="/doctors" className="navbar-link">Médecins</Link>
+            <Link to="/contact" className="navbar-link">Contact</Link>
+
+            {isAuthenticated ? (
+              <>
+                {user?.role === 'patient' && (
+                  <Link to="/addAppointments" className="navbar-link">Prendre rendez-vous</Link>
+                )}
+                {user?.role === 'medecin' && (
+                  <Link to="/dashboard" className="navbar-link">Dashboard</Link>
+                )}
+                <button onClick={handleLogout} className="btn btn-secondary">Déconnexion</button>
+              </>
+            ) : (
+              <Link to="/login" className="btn btn-primary">Connexion</Link>
+            )}
+          </div>
+
+          <button className="navbar-toggle" onClick={() => setIsOpen(!isOpen)}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        {isOpen && (
+          <div className="navbar-mobile">
+            <Link to="/home" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Accueil</Link>
+            <Link to="/services" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Services</Link>
+            <Link to="/doctors" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Médecins</Link>
+            <Link to="/contact" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Contact</Link>
+
+            {isAuthenticated ? (
+              <>
+                {user?.role === 'patient' && (
+                  <Link to="/addAppointments" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Prendre rendez-vous</Link>
+                )}
+                {user?.role === 'medecin' && (
+                  <Link to="/dashboard" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Dashboard</Link>
+                )}
+                <button onClick={handleLogout} className="navbar-mobile-link">Déconnexion</button>
+              </>
+            ) : (
+              <Link to="/login" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Connexion</Link>
+            )}
+          </div>
+        )}
       </div>
-      <span className="text-2xl font-bold text-blue-900 tracking-tight">MediFlow</span>
-    </div>
+    </nav>
+  );
+};
 
-    {/* Menu desktop */}
-    <div className="hidden md:flex items-center gap-10">
-      <a href="#accueil" className="text-gray-700 font-medium hover:text-blue-700 transition">Accueil</a>
-      <a href="#services" className="text-gray-700 font-medium hover:text-blue-700 transition">Services</a>
-      <a href="#medecins" className="text-gray-700 font-medium hover:text-blue-700 transition">Médecins</a>
-      <a href="#contact" className="text-gray-700 font-medium hover:text-blue-700 transition">Contact</a>
-      <button className="bg-gradient-to-br from-blue-900 to-blue-500 text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition">
-        Prendre RDV <ArrowRight className="w-5 h-5"/>
-      </button>
-    </div>
-
-    {/* Menu mobile button */}
-    <button className="md:hidden text-gray-700">
-      {mobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
-    </button>
-  </div>
-
-  {/* Mobile Menu */}
-  {mobileMenuOpen && (
-    <div className="md:hidden bg-white px-6 py-4 border-t border-gray-200 flex flex-col gap-3">
-      <a href="#accueil" className="text-gray-700 font-medium">Accueil</a>
-      <a href="#services" className="text-gray-700 font-medium">Services</a>
-      <a href="#medecins" className="text-gray-700 font-medium">Médecins</a>
-      <a href="#contact" className="text-gray-700 font-medium">Contact</a>
-      <button className="bg-gradient-to-br from-blue-900 to-blue-500 text-white py-2 rounded-xl font-semibold mt-2 w-full">Prendre RDV</button>
-    </div>
-  )}
-</nav>
+export default Navbar;

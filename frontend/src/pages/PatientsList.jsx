@@ -8,13 +8,11 @@ import Modal from '../components/Modal'
 import styles from './PatientsList.module.css'
 
 export default function PatientsList() {
-  const [patients, setPatients] = useState([
-    { id: 1, name: 'Jean Dupont', email: 'jean@email.com', phone: '06 12 34 56 78', age: 45, gender: 'M', status: 'Actif' },
-    { id: 2, name: 'Marie Martin', email: 'marie@email.com', phone: '06 23 45 67 89', age: 32, gender: 'F', status: 'Actif' },
-    { id: 3, name: 'Pierre Bernard', email: 'pierre@email.com', phone: '06 34 56 78 90', age: 58, gender: 'M', status: 'Actif' },
-    { id: 4, name: 'Sophie Leclerc', email: 'sophie@email.com', phone: '06 45 67 89 01', age: 28, gender: 'F', status: 'Inactif' },
-    { id: 5, name: 'Luc Dubois', email: 'luc@email.com', phone: '06 56 78 90 12', age: 55, gender: 'M', status: 'Actif' },
-  ])
+  const [patients, setPatients] = useState([])
+  // TODO: Fetch real patients from API
+  // useEffect(() => {
+  //   fetchPatients()
+  // }, [])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -143,33 +141,33 @@ export default function PatientsList() {
           <Input
             label="Nom *"
             value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
           <Input
             label="Email *"
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
           />
           <Input
             label="Téléphone"
             value={formData.phone}
-            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
           <Input
             label="Âge"
             type="number"
             value={formData.age}
-            onChange={(e) => setFormData({...formData, age: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
           />
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
               <label>Genre</label>
               <select
                 value={formData.gender}
-                onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                 className={styles.select}
               >
                 <option value="M">Masculin</option>
@@ -181,7 +179,7 @@ export default function PatientsList() {
               <label>Statut</label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({...formData, status: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className={styles.select}
               >
                 <option value="Actif">Actif</option>

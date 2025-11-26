@@ -1,0 +1,110 @@
+.drug-search {
+    background: #fff;
+}
+
+.drug-search-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.search-form {
+    max-width: 700px;
+    margin: 0 auto 48px;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 12px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 14px 20px;
+    border: 1px solid #e5e5e5;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.error-message {
+    max-width: 700px;
+    margin: 0 auto 24px;
+    padding: 16px;
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c00;
+    text-align: center;
+}
+
+.results-container {
+    display: grid;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.drug-card {
+    padding: 32px;
+}
+
+.drug-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #000;
+}
+
+.drug-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+.drug-manufacturer {
+    color: #666;
+    font-size: 0.9375rem;
+}
+
+.drug-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: #fafafa;
+    border-left: 3px solid #000;
+}
+
+.warning-section {
+    background: #fff9e6;
+    border-left-color: #f59e0b;
+}
+
+.drug-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 12px;
+}
+
+.drug-section-content {
+    color: #333;
+    line-height: 1.7;
+    font-size: 0.9375rem;
+}
+
+@media (max-width: 768px) {
+    .search-input-group {
+        flex-direction: column;
+    }
+
+    .drug-card {
+        padding: 24px;
+    }
+
+    .drug-name {
+        font-size: 1.25rem;
+    }
+}

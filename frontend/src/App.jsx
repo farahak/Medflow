@@ -13,26 +13,101 @@ import Signup from './pages/signup'
 import Appointment from './pages/addAppointments.jsx'
 import AddAvailability from './pages/AddAvailability.jsx'
 import MainPage from './pages/home.jsx'
+import DashboardLayout from './components/DashboardLayout'
+
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Public Routes */}
           <Route path="/home" element={<MainPage />} />
-         
-          <Route path="/patients" element={<PatientsList />} />
-          <Route path="/appointments" element={<AppointmentsList />} />
-          <Route path="/consultations" element={<ConsultationPage />} />
-          <Route path="/billing" element={<BillingPage />} />
-          <Route path="/settings" element={<AdminSettings />} />
-          <Route path="/signup" element={<Signup/>} />
-          <Route path="/patient-portal" element={<PatientPortal />} />
-            <Route path="/appointment" element={<Appointment />} />
-             <Route path="/AddAvailability" element={<AddAvailability />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Protected Doctor Dashboard Routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute allowedRoles={['medecin']}>
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/appointments" element={
+            <ProtectedRoute allowedRoles={['medecin']}>
+              <DashboardLayout>
+                <AppointmentsList />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/add-availability" element={
+            <ProtectedRoute allowedRoles={['medecin']}>
+              <DashboardLayout>
+                <AddAvailability />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Other Protected Routes (for future use) */}
+          <Route path="/patients" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <PatientsList />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/consultations" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ConsultationPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/billing" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <BillingPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AdminSettings />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/patient-portal" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <PatientPortal />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/appointment" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Appointment />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Patient Appointment Booking Route */}
+          <Route path="/addAppointments" element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <Appointment />
+            </ProtectedRoute>
+          } />
+
+          {/* Default Redirect to Home */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
       </AuthProvider>
     </Router>

@@ -28,35 +28,45 @@ export default function Login({ onLoginSuccess }) {
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault()
-  setErrors({})
+    e.preventDefault()
+    setErrors({})
 
-  const newErrors = {}
-  if (!email) {
-    newErrors.email = 'Email requis'
-  } else if (!validateEmail(email)) {
-    newErrors.email = 'Email invalide'
-  }
+    const newErrors = {}
+    if (!email) {
+      newErrors.email = 'Email requis'
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Email invalide'
+    }
 
-  if (!password) {
-    newErrors.password = 'Mot de passe requis'
-  } else if (password.length < 6) {
-    newErrors.password = 'Le mot de passe doit faire au least 6 caractères'
-  }
+    if (!password) {
+      newErrors.password = 'Mot de passe requis'
+    } else if (password.length < 6) {
+      newErrors.password = 'Le mot de passe doit faire au least 6 caractères'
+    }
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors)
-    return
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
 
-  try {
-    await login(email, password)
-    navigate("/appointment")   // ✅ succès
-  } catch (error) {
-    setErrors({ form: error.message || 'Identifiants invalides. Veuillez réessayer.' })
-    navigate("/signup")        // ❌ échec
+    try {
+      const userData = await login(email, password)
+      console.log('User data from login:', userData)
+      console.log('User role:', userData?.role)
+
+      // Redirect doctors to dashboard, others to home
+      if (userData?.role === 'medecin') {
+        console.log('Redirecting to dashboard')
+        navigate("/dashboard")
+      } else {
+        console.log('Redirecting to home')
+        navigate("/home")
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      setErrors({ form: error.message || 'Identifiants invalides. Veuillez réessayer.' })
+    }
   }
-}
 
   const testCredentials = [
     { role: 'admin', email: 'admin@medflow.com' },
@@ -97,10 +107,10 @@ export default function Login({ onLoginSuccess }) {
             required
           />
 
-         
 
-          <Button 
-            type="submit" 
+
+          <Button
+            type="submit"
             disabled={loading}
             className={styles.submitBtn}
           >

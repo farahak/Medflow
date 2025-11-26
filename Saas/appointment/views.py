@@ -72,7 +72,7 @@ class AddAppointmentView(generics.CreateAPIView):
         start = serializer.validated_data.get("start_datetime")
         end = serializer.validated_data.get("end_datetime")
 
-        # 1) Vérifier que l'heure demandée est comprise dans une disponibilité
+        # 1) Vérifier que l'heure demandée est dans une disponibilité
         availability = DoctorAvailability.objects.filter(
             medecin=medecin,
             start_datetime__lte=start,
@@ -82,37 +82,39 @@ class AddAppointmentView(generics.CreateAPIView):
         if not availability:
             raise ValidationError("Selected time is not inside doctor's availability range")
 
-        # 2) Calculer la durée d’un slot (30 min + 15 min pause)
-        SLOT_DURATION = timedelta(minutes=45)
-
-        # 3) Calculer tous les slots possibles dans la disponibilité
-        slots = []
-        current = availability.start_datetime
-        while current + timedelta(minutes=30) <= availability.end_datetime:
-            slot_start = current
-            slot_end = current + timedelta(minutes=30)  # consultation = 30 min
-
-            slots.append((slot_start, slot_end))
-            current += SLOT_DURATION  # +15 min break automatically included
-
-        # 4) Vérifier si le slot demandé existe
-        requested_slot = (start, end)
-        if requested_slot not in slots:
-            raise ValidationError("Requested time does not match any available 30-min slot")
-
-        # 5) Vérifier si le slot est déjà pris
-        if Appointment.objects.filter(
+        # 2) Vérifier si un autre RDV chevauche ce créneau
+        overlapping = Appointment.objects.filter(
             medecin=medecin,
-            start_datetime=start,
-            end_datetime=end
-        ).exists():
-            raise ValidationError("This slot is already booked")
+            start_datetime__lt=end,
+            end_datetime__gt=start
+        ).exists()
 
-        # 6) Tout est OK, on enregistre
+        if overlapping:
+            raise ValidationError("This time range is already booked")
+
+        # 3) Tout est OK → enregistrer
         serializer.save(patient=user.patient_profile)
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_doctor_availabilities(request, doctor_id):
     availabilities = DoctorAvailability.objects.filter(medecin_id=doctor_id)
     serializer = DoctorAvailabilitySerializer(availabilities, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_my_appointments(request):
+    user = request.user
+
+    # Vérifier que l'utilisateur est bien un médecin
+    if user.role != "medecin":
+        raise ValidationError({"detail": "Only doctors can access their appointments."})
+
+    medecin = user.medecin_profile
+
+    # Récupérer les rendez-vous du médecin connecté
+    appointments = Appointment.objects.filter(medecin=medecin).order_by("start_datetime")
+
+    serializer = AppointmentSerializer(appointments, many=True)
     return Response(serializer.data)

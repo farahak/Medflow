@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import Features from "../components/Features";
-import Testimonials from "../components/Testimonials";
-import Footer from "../components/Footer";
+import React from 'react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import Hero from '../components/Hero';
+import Features from '../components/Features';
+import DrugSearch from '../components/DrugSearch';
+import Testimonials from '../components/Testimonials';
 
-
-export default function MainPage() {
+const Home = () => {
   return (
-    <div className="font-sans">
+    <div className="min-h-screen">
       <Navbar />
-      <Hero />
-      <Features />
-      <Testimonials />
+      <main>
+        <Hero />
+        <Features />
+        <DrugSearch />
+        <Testimonials />
+      </main>
       <Footer />
     </div>
   );
-}
+};
 
+export default Home;

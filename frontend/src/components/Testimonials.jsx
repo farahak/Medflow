@@ -1,22 +1,46 @@
-<section className="bg-gray-50 py-24 px-6">
-  <div className="max-w-7xl mx-auto text-center mb-16">
-    <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900">Ce Que Disent Nos Patients</h2>
-  </div>
+import React from 'react';
+import './Testimonials.css';
 
-  <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-    {testimonials.map((t, i) => (
-      <div key={i} className="bg-white p-8 rounded-2xl border border-gray-200">
-        <div className="flex gap-1 mb-4">
-          {[...Array(t.rating)].map((_, j) => (
-            <Star key={j} className="w-4 h-4 text-yellow-400"/>
+const Testimonials = () => {
+  const testimonials = [
+    {
+      name: "Sophie Martin",
+      role: "Patiente",
+      content: "Une équipe formidable et très à l'écoute. La prise de rendez-vous est simple et rapide."
+    },
+    {
+      name: "Marc Dubois",
+      role: "Patient",
+      content: "Le suivi est excellent. Je recommande vivement cette clinique pour son professionnalisme."
+    },
+    {
+      name: "Julie Bernard",
+      role: "Patiente",
+      content: "Interface très intuitive pour gérer mes rendez-vous. Très satisfaite du service."
+    }
+  ];
+
+  return (
+    <section className="testimonials section">
+      <div className="container">
+        <div className="testimonials-header">
+          <h2 className="section-title">Ce Que Disent Nos Patients</h2>
+        </div>
+
+        <div className="grid grid-3">
+          {testimonials.map((t, i) => (
+            <div key={i} className="testimonial-card card">
+              <p className="testimonial-content">"{t.content}"</p>
+              <div className="testimonial-author">
+                <div className="testimonial-name">{t.name}</div>
+                <div className="testimonial-role">{t.role}</div>
+              </div>
+            </div>
           ))}
         </div>
-        <p className="text-gray-600 mb-4">"{t.content}"</p>
-        <div>
-          <div className="font-bold text-gray-900">{t.name}</div>
-          <div className="text-sm text-gray-500">{t.role}</div>
-        </div>
       </div>
-    ))}
-  </div>
-</section>
+    </section>
+  );
+};
+
+export default Testimonials;

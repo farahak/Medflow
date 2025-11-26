@@ -1,0 +1,37 @@
+.testimonials {
+    background: #fff;
+}
+
+.testimonials-header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.testimonial-card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.testimonial-content {
+    color: #333;
+    line-height: 1.7;
+    font-size: 0.9375rem;
+    font-style: italic;
+}
+
+.testimonial-author {
+    padding-top: 16px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.testimonial-name {
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.testimonial-role {
+    font-size: 0.875rem;
+    color: #666;
+}

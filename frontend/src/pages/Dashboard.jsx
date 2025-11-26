@@ -2,37 +2,79 @@
 
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useApi } from '../hooks/useApi'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import styles from './Dashboard.module.css'
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const { getDoctorAppointments, getMyAvailabilities, loading } = useApi()
+
   const [stats, setStats] = useState({
     patients: 245,
-    appointments: 18,
+    appointments: 0,
     revenue: 12500,
-    pending: 5,
+    pending: 0,
     doctors: 8,
     consultations: 42
   })
 
   const [recentData, setRecentData] = useState({
-    appointments: [
-      { id: 1, patient: 'Jean Dupont', doctor: 'Dr. Laurent', time: '09:00', status: 'Confirmé' },
-      { id: 2, patient: 'Marie Martin', doctor: 'Dr. Leclerc', time: '10:30', status: 'En attente' },
-      { id: 3, patient: 'Pierre Bernard', doctor: 'Dr. Laurent', time: '14:00', status: 'Confirmé' },
-    ],
-    patients: [
-      { id: 1, name: 'Jean Dupont', lastVisit: '2024-01-15', status: 'Actif' },
-      { id: 2, name: 'Marie Martin', lastVisit: '2024-01-16', status: 'Actif' },
-      { id: 3, name: 'Pierre Bernard', lastVisit: '2024-01-17', status: 'Inactif' },
-    ]
+    appointments: [],
+    availabilities: [],
+    patients: []
   })
 
+  // Fetch doctor's data when component mounts
   useEffect(() => {
-    console.log('[v0] Dashboard loaded for role:', user?.role)
+    console.log('[Dashboard] Loaded for role:', user?.role)
+
+    if (user?.role === 'medecin') {
+      fetchDoctorData()
+    }
   }, [user])
+
+  const fetchDoctorData = async () => {
+    try {
+      console.log('[Dashboard] Fetching doctor appointments...')
+
+      // Fetch appointments
+      const appointmentsData = await getDoctorAppointments()
+      console.log('[Dashboard] Appointments data received:', appointmentsData)
+      console.log('[Dashboard] Appointments array:', Array.isArray(appointmentsData))
+      console.log('[Dashboard] Appointments length:', appointmentsData?.length)
+
+      // TODO: Uncomment when availability endpoint is available
+      // Fetch availabilities
+      // const availabilitiesData = await getMyAvailabilities()
+      // console.log('[Dashboard] Availabilities data:', availabilitiesData)
+
+      // Update state with real data
+      setRecentData(prev => {
+        const newData = {
+          ...prev,
+          appointments: appointmentsData || [],
+          // availabilities: availabilitiesData || []
+        }
+        console.log('[Dashboard] Updating recentData to:', newData)
+        return newData
+      })
+
+      // Update stats
+      setStats(prev => ({
+        ...prev,
+        appointments: appointmentsData?.length || 0,
+        pending: appointmentsData?.filter(apt => apt.status === 'pending')?.length || 0
+      }))
+
+      console.log('[Dashboard] Data fetch complete')
+
+    } catch (error) {
+      console.error('[Dashboard] Error fetching doctor data:', error)
+      console.error('[Dashboard] Error details:', error.response?.data)
+    }
+  }
 
   const renderRoleBasedContent = () => {
     switch (user?.role) {
@@ -56,7 +98,7 @@ export default function Dashboard() {
             </div>
           </div>
         )
-      case 'doctor':
+      case 'medecin':
         return (
           <div className={styles.roleContent}>
             <h2>Vue Médecin</h2>
@@ -115,97 +157,141 @@ export default function Dashboard() {
   }
 
   return (
-    <div className={styles.layout}>
-      <main className={styles.main}>
-        <div className={styles.container}>
-          <div className={styles.header}>
+    <div className={styles.dashboardContent}>
+      <div className={styles.header}>
+        <div>
+          <h1>Tableau de Bord</h1>
+          <p className={styles.clinic}>{user?.clinic} • {user?.role}</p>
+        </div>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <Card className={styles.statCard}>
+          <div className={styles.statContent}>
+            <div className={styles.statIcon}>👥</div>
             <div>
-              <h1>Tableau de Bord</h1>
-              <p className={styles.clinic}>{user?.clinic} • {user?.role}</p>
+              <h3>Patients</h3>
+              <p className={styles.statNumber}>{stats.patients}</p>
             </div>
           </div>
+        </Card>
 
-          <div className={styles.statsGrid}>
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statIcon}>👥</div>
-                <div>
-                  <h3>Patients</h3>
-                  <p className={styles.statNumber}>{stats.patients}</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statIcon}>📅</div>
-                <div>
-                  <h3>Rendez-vous</h3>
-                  <p className={styles.statNumber}>{stats.appointments}</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statIcon}>💰</div>
-                <div>
-                  <h3>Revenus Ce Mois</h3>
-                  <p className={styles.statNumber}>${stats.revenue}</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statIcon}>⏳</div>
-                <div>
-                  <h3>En Attente</h3>
-                  <p className={styles.statNumber}>{stats.pending}</p>
-                </div>
-              </div>
-            </Card>
+        <Card className={styles.statCard}>
+          <div className={styles.statContent}>
+            <div className={styles.statIcon}>📅</div>
+            <div>
+              <h3>Rendez-vous</h3>
+              <p className={styles.statNumber}>{stats.appointments}</p>
+            </div>
           </div>
+        </Card>
 
-          {renderRoleBasedContent()}
+        <Card className={styles.statCard}>
+          <div className={styles.statContent}>
+            <div className={styles.statIcon}>💰</div>
+            <div>
+              <h3>Revenus Ce Mois</h3>
+              <p className={styles.statNumber}>${stats.revenue}</p>
+            </div>
+          </div>
+        </Card>
 
-          <div className={styles.contentGrid}>
-            <Card>
-              <h2>Rendez-vous Prochains</h2>
+        <Card className={styles.statCard}>
+          <div className={styles.statContent}>
+            <div className={styles.statIcon}>⏳</div>
+            <div>
+              <h3>En Attente</h3>
+              <p className={styles.statNumber}>{stats.pending}</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {renderRoleBasedContent()}
+
+      <div className={styles.contentGrid}>
+        <Card>
+          <h2>Rendez-vous Prochains</h2>
+          {loading ? (
+            <p>Chargement...</p>
+          ) : recentData.appointments.length > 0 ? (
+            <table className={styles.miniTable}>
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Date</th>
+                  <th>Heure</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentData.appointments.slice(0, 5).map(apt => (
+                  <tr key={apt.id}>
+                    <td>{apt.patient_name || apt.patient || 'N/A'}</td>
+                    <td>{apt.date || new Date(apt.created_at).toLocaleDateString()}</td>
+                    <td>{apt.time || apt.start_time || 'N/A'}</td>
+                    <td>
+                      <span className={`${styles.badge} ${styles[apt.status?.toLowerCase()]}`}>
+                        {apt.status === 'pending' ? 'En attente' :
+                          apt.status === 'confirmed' ? 'Confirmé' :
+                            apt.status === 'cancelled' ? 'Annulé' : apt.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Aucun rendez-vous pour le moment</p>
+          )}
+        </Card>
+
+        <Card>
+          <h2>Actions Rapides</h2>
+          <div className={styles.quickActions}>
+            <Button onClick={() => console.log('[v0] Adding patient')}>Nouveau Patient</Button>
+            <Button variant="secondary" onClick={() => console.log('[v0] Adding appointment')}>Nouveau Rendez-vous</Button>
+            <Button variant="secondary" onClick={() => console.log('[v0] Creating consultation')}>Nouvelle Consultation</Button>
+            <Button variant="secondary" onClick={() => console.log('[v0] Creating invoice')}>Nouvelle Facture</Button>
+          </div>
+        </Card>
+
+        {user?.role === 'medecin' && (
+          <Card>
+            <h2>Mes Disponibilités</h2>
+            {loading ? (
+              <p>Chargement...</p>
+            ) : recentData.availabilities.length > 0 ? (
               <table className={styles.miniTable}>
                 <thead>
                   <tr>
-                    <th>Patient</th>
-                    <th>Médecin</th>
-                    <th>Heure</th>
+                    <th>Date</th>
+                    <th>Heure Début</th>
+                    <th>Heure Fin</th>
                     <th>Statut</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {recentData.appointments.map(apt => (
-                    <tr key={apt.id}>
-                      <td>{apt.patient}</td>
-                      <td>{apt.doctor}</td>
-                      <td>{apt.time}</td>
-                      <td><span className={`${styles.badge} ${styles[apt.status.toLowerCase()]}`}>{apt.status}</span></td>
+                  {recentData.availabilities.slice(0, 5).map(avail => (
+                    <tr key={avail.id}>
+                      <td>{avail.date || new Date(avail.created_at).toLocaleDateString()}</td>
+                      <td>{avail.start_time}</td>
+                      <td>{avail.end_time}</td>
+                      <td>
+                        <span className={`${styles.badge} ${avail.is_booked ? styles.cancelled : styles.confirmed}`}>
+                          {avail.is_booked ? 'Réservé' : 'Disponible'}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </Card>
-
-            <Card>
-              <h2>Actions Rapides</h2>
-              <div className={styles.quickActions}>
-                <Button onClick={() => console.log('[v0] Adding patient')}>Nouveau Patient</Button>
-                <Button variant="secondary" onClick={() => console.log('[v0] Adding appointment')}>Nouveau Rendez-vous</Button>
-                <Button variant="secondary" onClick={() => console.log('[v0] Creating consultation')}>Nouvelle Consultation</Button>
-                <Button variant="secondary" onClick={() => console.log('[v0] Creating invoice')}>Nouvelle Facture</Button>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </main>
+            ) : (
+              <p>Aucune disponibilité ajoutée</p>
+            )}
+          </Card>
+        )}
+      </div>
     </div>
   )
 }

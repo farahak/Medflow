@@ -28,31 +28,31 @@ export const useApi = () => {
 
   const getProfile = useCallback(() => request('get', '/user/me/'), [request])
 
-  const addAvailability = useCallback((date, start_time, end_time) => 
+  const addAvailability = useCallback((date, start_time, end_time) =>
     request('post', '/availability/', { date, start_time, end_time }), [request])
 
   const getMyAvailabilities = useCallback(() => request('get', '/availability/me/'), [request])
 
-  const createAppointment = useCallback((doctor_id, availability_id) => 
+  const createAppointment = useCallback((doctor_id, availability_id) =>
     request('post', '/appointments/', { doctor_id, availability_id }), [request])
 
   const getUserAppointments = useCallback(() => request('get', '/appointments/me/'), [request])
 
-  const getDoctorAppointments = useCallback(() => request('get', '/appointments/doctor/'), [request])
+  const getDoctorAppointments = useCallback(() => request('get', '/appointments/my-appointments/'), [request])
 
   const getAllAppointments = useCallback(() => request('get', '/appointments/'), [request])
 
-  return { 
-    request, 
-    loading, 
-    error, 
-    data, 
-    getProfile, 
-    addAvailability, 
-    getMyAvailabilities, 
-    createAppointment, 
-    getUserAppointments, 
-    getDoctorAppointments, 
-    getAllAppointments 
+  return {
+    request,
+    loading,
+    error,
+    data,
+    getProfile,
+    addAvailability,
+    getMyAvailabilities,
+    createAppointment,
+    getUserAppointments,
+    getDoctorAppointments,
+    getAllAppointments
   }
 }
