@@ -54,13 +54,16 @@ export default function Login({ onLoginSuccess }) {
       console.log('User data from login:', userData)
       console.log('User role:', userData?.role)
 
-      // Redirect doctors to dashboard, others to home
+      // Redirect based on user role
       if (userData?.role === 'medecin') {
-        console.log('Redirecting to dashboard')
+        console.log('Redirecting to doctor dashboard')
         navigate("/dashboard")
+      } else if (userData?.role === 'receptionist') {
+        console.log('Redirecting to receptionist dashboard')
+        navigate("/receptionist/dashboard")
       } else {
-        console.log('Redirecting to home')
-        navigate("/home")
+        console.log('Redirecting to patient portal')
+        navigate("/addAppointments")
       }
     } catch (error) {
       console.error('Login error:', error)

@@ -1,102 +1,104 @@
-.container {
-  min-height: 100vh;
+/* --- GLOBAL LAYOUT --- */
+.signup-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0066cc 0%, #10b981 100%);
-  padding: 1rem;
+  align-items: center;
+  height: 100vh;
+  background: #0A0A0A; /* Noir élégant */
+  padding: 20px;
 }
 
-.loginBox {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 3rem 2rem;
-  max-width: 400px;
-  width: 100%;
+/* --- CARD --- */
+.signup-card {
+  background: #ffffff;
+  padding: 35px;
+  width: 420px;
+  border-radius: 14px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.7s ease-out;
 }
 
-.header {
+.signup-card h2 {
   text-align: center;
-  margin-bottom: 2rem;
+  color: #0A1A3D; /* Bleu foncé */
+  margin-bottom: 20px;
+  font-weight: 700;
 }
 
-.icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.header h1 {
-  font-size: 2rem;
-  color: #0066cc;
-  margin-bottom: 0.5rem;
-}
-
-.header p {
-  color: #64748b;
-  margin: 0;
-}
-
-.form {
-  margin-bottom: 2rem;
-}
-
-.error {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.roleSelect {
-  margin-bottom: 1.5rem;
-}
-
-.roleSelect label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #0f172a;
-}
-
-.select {
+/* --- INPUTS --- */
+.signup-card input,
+.signup-card select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: #F7F8FA;
+  border: 2px solid #D0D4DB;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.3s ease;
 }
 
-.select:focus {
+.signup-card input:focus,
+.signup-card select:focus {
+  border-color: #0A1A3D;
+  box-shadow: 0 0 6px rgba(10, 26, 61, 0.3);
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
-.submitBtn {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.credentials {
-  text-align: center;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 6px;
-  font-size: 0.85rem;
-}
-
-.credentials p {
-  margin: 0 0 0.5rem 0;
-  color: #64748b;
-}
-
-.credentials small {
-  color: #0066cc;
+/* --- PHOTO UPLOAD --- */
+.photo-upload label {
+  display: block;
   font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.photo-upload input[type="file"] {
+  padding: 8px;
+  background: #F0F0F0;
+  border-radius: 8px;
+}
+
+.photo-preview {
+  margin-top: 10px;
+  max-width: 180px;
+  border-radius: 10px;
+  border: 2px solid #0A1A3D;
+}
+
+/* --- BUTTON WITH ANIMATION --- */
+.btn-animated {
+  width: 100%;
+  padding: 14px;
+  background: #0A1A3D; /* Bleu foncé */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+/* Hover glow */
+.btn-animated:hover {
+  background: #0D2A6A;
+  box-shadow: 0 0 12px rgba(13, 42, 106, 0.6);
+}
+
+/* Button Ripple animation */
+.btn-animated:active {
+  animation: ripple 0.4s linear;
+}
+
+@keyframes ripple {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(1.2); opacity: 0.2; }
+}
+
+/* Fade in form */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

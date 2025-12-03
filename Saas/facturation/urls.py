@@ -1,8 +1,12 @@
 # facturation/urls.py
 from rest_framework.routers import DefaultRouter
-from .views import InvoiceViewSet
+from django.urls import path, include
+from .views import InvoiceViewSet, generate_invoice
 
 router = DefaultRouter()
 router.register(r'invoices', InvoiceViewSet)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('generate/', generate_invoice, name='generate_invoice'),
+]

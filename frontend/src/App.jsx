@@ -14,6 +14,13 @@ import Appointment from './pages/addAppointments.jsx'
 import AddAvailability from './pages/AddAvailability.jsx'
 import MainPage from './pages/home.jsx'
 import DashboardLayout from './components/DashboardLayout'
+import DoctorsGallery from './pages/DoctorsGallery'
+// Receptionist pages
+import ReceptionistDashboard from './pages/ReceptionistDashboard'
+import ReceptionistAppointments from './pages/ReceptionistAppointments'
+import ReceptionistDoctors from './pages/ReceptionistDoctors'
+import InvoiceGeneration from './pages/InvoiceGeneration'
+import InvoiceList from './pages/InvoiceList'
 
 function App() {
   return (
@@ -24,6 +31,7 @@ function App() {
           <Route path="/home" element={<MainPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/doctors" element={<DoctorsGallery />} />
 
           {/* Protected Doctor Dashboard Routes */}
           <Route path="/dashboard" element={
@@ -103,6 +111,47 @@ function App() {
           <Route path="/addAppointments" element={
             <ProtectedRoute allowedRoles={['patient']}>
               <Appointment />
+            </ProtectedRoute>
+          } />
+
+          {/* Receptionist Routes */}
+          <Route path="/receptionist/dashboard" element={
+            <ProtectedRoute allowedRoles={['receptionist']}>
+              <DashboardLayout>
+                <ReceptionistDashboard />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/receptionist/appointments" element={
+            <ProtectedRoute allowedRoles={['receptionist']}>
+              <DashboardLayout>
+                <ReceptionistAppointments />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/receptionist/doctors" element={
+            <ProtectedRoute allowedRoles={['receptionist']}>
+              <DashboardLayout>
+                <ReceptionistDoctors />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/receptionist/invoices" element={
+            <ProtectedRoute allowedRoles={['receptionist']}>
+              <DashboardLayout>
+                <InvoiceList />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/receptionist/generate-invoice/:appointmentId" element={
+            <ProtectedRoute allowedRoles={['receptionist']}>
+              <DashboardLayout>
+                <InvoiceGeneration />
+              </DashboardLayout>
             </ProtectedRoute>
           } />
 

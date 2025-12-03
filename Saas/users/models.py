@@ -48,6 +48,8 @@ class Medecin(models.Model):
     last_name = models.CharField(max_length=150)   # du signup
     specialty = models.CharField(max_length=200, blank=True)
     phone = models.CharField(max_length=30, blank=True)
+    consultation_price = models.DecimalField(max_digits=10, decimal_places=2, default=50.00)
+    photo = models.ImageField(upload_to='doctors_photos/', null=True, blank=True)
     # add other doctor-specific fields
 
     def __str__(self):

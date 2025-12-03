@@ -27,7 +27,8 @@ class MedecinProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model = Medecin
-        fields = ('id', 'user' ,'first_name', 'last_name', 'specialty', 'phone')
+        fields = ('id', 'user' ,'first_name', 'last_name', 'specialty', 'phone', 'photo', 'consultation_price')
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

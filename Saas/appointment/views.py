@@ -1,3 +1,4 @@
+# appointments/views.py
 from django.shortcuts import render
 from datetime import timedelta
 from rest_framework.exceptions import ValidationError
@@ -117,4 +118,47 @@ def get_my_appointments(request):
     appointments = Appointment.objects.filter(medecin=medecin).order_by("start_datetime")
 
     serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)
+
+
+# Receptionist endpoints
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def receptionist_get_all_appointments(request):
+    """List all appointments - accessible only by receptionist"""
+    user = request.user
+    
+    if user.role != "receptionist":
+        raise ValidationError({"detail": "Only receptionists can access all appointments."})
+    
+    # Get all appointments ordered by date
+    appointments = Appointment.objects.all().order_by("-start_datetime")
+    serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def receptionist_update_appointment_status(request, appointment_id):
+    """Update appointment status - accessible by receptionist and medecin"""
+    user = request.user
+    
+    if user.role not in ["receptionist", "medecin"]:
+        raise ValidationError({"detail": "Only receptionists and doctors can update appointment status."})
+    
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+    except Appointment.DoesNotExist:
+        return Response({"detail": "Appointment not found."}, status=404)
+    
+    # Get new status from request
+    new_status = request.data.get('status')
+    
+    if new_status not in dict(Appointment.STATUS_CHOICES):
+        return Response({"detail": "Invalid status."}, status=400)
+    
+    appointment.status = new_status
+    appointment.save()
+    
+    serializer = AppointmentSerializer(appointment)
     return Response(serializer.data)
