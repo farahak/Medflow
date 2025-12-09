@@ -1,24 +1,29 @@
 'use client'
 
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import styles from './PatientPortal.module.css'
 
 export default function PatientPortal() {
+  const navigate = useNavigate()
+
   const handleBookAppointment = () => {
-    console.log('[v0] Opening appointment booking')
-    alert('Redirection vers la réservation de rendez-vous...')
+    navigate('/addAppointments')
   }
 
   const handleViewConsultations = () => {
-    console.log('[v0] Opening consultations')
-    alert('Affichage de vos consultations...')
+    navigate('/profile') // Redirects to Profile for history
   }
 
   const handleDownloadDocuments = () => {
     console.log('[v0] Opening documents download')
     alert('Affichage de vos documents...')
+  }
+
+  const handleMessaging = () => {
+    navigate('/messages')
   }
 
   const handlePayment = () => {
@@ -62,6 +67,13 @@ export default function PatientPortal() {
               <h3>Vos Documents</h3>
               <p>Téléchargez ordonnances et résultats d'analyses</p>
               <Button onClick={handleDownloadDocuments}>Télécharger</Button>
+            </Card>
+
+            <Card className={styles.featureCard}>
+              <div className={styles.featureIcon}>💬</div>
+              <h3>Messagerie</h3>
+              <p>Contactez vos médecins directement</p>
+              <Button onClick={handleMessaging}>Messagerie</Button>
             </Card>
 
             <Card className={styles.featureCard}>

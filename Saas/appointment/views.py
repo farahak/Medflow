@@ -162,3 +162,20 @@ def receptionist_update_appointment_status(request, appointment_id):
     
     serializer = AppointmentSerializer(appointment)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_patient_appointments(request):
+    user = request.user
+    if user.role != "patient":
+        raise ValidationError({"detail": "Only patients can access their appointment history."})
+    
+    # Ensure patient profile exists
+    try:
+        patient = user.patient_profile
+    except:
+        return Response({"detail": "Patient profile not found."}, status=404)
+
+    appointments = Appointment.objects.filter(patient=patient).order_by("-start_datetime")
+    serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)

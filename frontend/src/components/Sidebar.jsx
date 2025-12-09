@@ -8,12 +8,43 @@ const Sidebar = () => {
   const { user } = useAuth();
   const isActive = (path) => location.pathname === path;
 
-  // Menu items for doctors only
-  const doctorMenuItems = [
-    { path: '/dashboard', label: 'Dashboard' },
-    { path: '/appointments', label: 'Rendez-vous' },
-    { path: '/add-availability', label: 'Disponibilités' },
-  ];
+  // Define menu items based on role
+  const getMenuItems = () => {
+    const commonItems = [
+      { path: '/profile', label: '👤 Mon Profil', icon: '👤' },
+      { path: '/messages', label: '💬 Messages', icon: '💬' },
+    ];
+
+    if (user?.role === 'medecin') {
+      return [
+        { path: '/dashboard', label: '📊 Dashboard', icon: '📊' },
+        { path: '/appointments', label: '📅 Rendez-vous', icon: '📅' },
+        { path: '/add-availability', label: '🕒 Disponibilités', icon: '🕒' },
+        ...commonItems,
+      ];
+    }
+
+    if (user?.role === 'patient') {
+      return [
+        { path: '/addAppointments', label: '📅 Prendre RDV', icon: '📅' },
+        ...commonItems,
+      ];
+    }
+
+    if (user?.role === 'receptionist') {
+      return [
+        { path: '/receptionist/dashboard', label: '📊 Dashboard', icon: '📊' },
+        { path: '/receptionist/appointments', label: '📅 Rendez-vous', icon: '📅' },
+        { path: '/receptionist/doctors', label: '👨‍⚕️ Médecins', icon: '👨‍⚕️' },
+        { path: '/receptionist/invoices', label: '💰 Factures', icon: '💰' },
+        ...commonItems,
+      ];
+    }
+
+    return commonItems;
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <aside className="sidebar">
@@ -24,7 +55,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="sidebar-nav">
-        {doctorMenuItems.map((item) => (
+        {menuItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
@@ -37,8 +68,8 @@ const Sidebar = () => {
 
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <p className="sidebar-user-name">{user?.first_name || 'Dr.'} {user?.last_name || 'Médecin'}</p>
-          <p className="sidebar-user-role">Médecin</p>
+          <p className="sidebar-user-name">{user?.first_name || user?.email?.split('@')[0] || 'User'}</p>
+          <p className="sidebar-user-role">{user?.role === 'medecin' ? 'Médecin' : user?.role === 'patient' ? 'Patient' : user?.role === 'receptionist' ? 'Réceptionniste' : user?.role}</p>
         </div>
       </div>
     </aside>

@@ -28,11 +28,16 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
+                <Link to="/profile" className="navbar-link">👤 Profil</Link>
+                <Link to="/messages" className="navbar-link">💬 Messages</Link>
                 {user?.role === 'patient' && (
                   <Link to="/addAppointments" className="navbar-link">Prendre rendez-vous</Link>
                 )}
                 {user?.role === 'medecin' && (
                   <Link to="/dashboard" className="navbar-link">Dashboard</Link>
+                )}
+                {user?.role === 'receptionist' && (
+                  <Link to="/receptionist/dashboard" className="navbar-link">Dashboard</Link>
                 )}
                 <button onClick={handleLogout} className="btn btn-secondary">Déconnexion</button>
               </>
@@ -57,11 +62,16 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <>
+                <Link to="/profile" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>👤 Profil</Link>
+                <Link to="/messages" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>💬 Messages</Link>
                 {user?.role === 'patient' && (
                   <Link to="/addAppointments" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Prendre rendez-vous</Link>
                 )}
                 {user?.role === 'medecin' && (
                   <Link to="/dashboard" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Dashboard</Link>
+                )}
+                {user?.role === 'receptionist' && (
+                  <Link to="/receptionist/dashboard" className="navbar-mobile-link" onClick={() => setIsOpen(false)}>Dashboard</Link>
                 )}
                 <button onClick={handleLogout} className="navbar-mobile-link">Déconnexion</button>
               </>

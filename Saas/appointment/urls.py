@@ -2,7 +2,7 @@
 from rest_framework.routers import DefaultRouter
 from .views import (AddAppointmentView, AddAvailabilityView, DoctorAvailabilityViewSet, 
                      AppointmentViewSet, get_doctor_availabilities, get_my_appointments,
-                     receptionist_get_all_appointments, receptionist_update_appointment_status)
+                     receptionist_get_all_appointments, receptionist_update_appointment_status, get_patient_appointments)
 from django.urls import path, include
 
 router = DefaultRouter()
@@ -16,6 +16,7 @@ urlpatterns = [
     path("appointment/add/", AddAppointmentView.as_view(), name="add_appointment"),
     path("doctor/<int:doctor_id>/availabilities/", get_doctor_availabilities),
     path("my-appointments/", get_my_appointments, name="my_appointments"),
+    path("my-history/", get_patient_appointments, name="patient_appointments_history"),
     # Receptionist endpoints
     path("all/", receptionist_get_all_appointments, name="receptionist_all_appointments"),
     path("<int:appointment_id>/update-status/", receptionist_update_appointment_status, name="update_appointment_status"),

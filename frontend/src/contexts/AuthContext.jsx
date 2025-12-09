@@ -7,7 +7,7 @@ const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true) // Start as true while checking auth
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   // -------------------------------------------
@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.clear()
       }
     }
+    setLoading(false) // Done checking
   }, [])
 
   // -------------------------------------------
@@ -35,8 +36,8 @@ export const AuthProvider = ({ children }) => {
   const signup = useCallback(async (email, password, first_name, last_name, role) => {
     setLoading(true)
     try {
-      const response = await api.post('/users/signup/', { 
-        email, password, first_name, last_name, role 
+      const response = await api.post('/users/signup/', {
+        email, password, first_name, last_name, role
       })
       return response.data
     } catch (error) {

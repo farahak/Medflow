@@ -1,6 +1,6 @@
 # users/urls.py
 from django.urls import path
-from .views import LoginView, MedecinListView, SignupView, CurrentPatientProfileView, PatientListView, ReceptionistSignupPatientView
+from .views import LoginView, MedecinListView, SignupView, CurrentPatientProfileView, PatientListView, ReceptionistSignupPatientView, ChangePasswordView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path('medecins/', MedecinListView.as_view(), name='medecin-list'),
     path('patients/', PatientListView.as_view(), name='patient-list'),
     path('receptionist/signup-patient/', ReceptionistSignupPatientView.as_view(), name='receptionist-signup-patient'),
+    path('change-password/', ChangePasswordView.as_view(), name='change_password'),
 ]

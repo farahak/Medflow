@@ -2,7 +2,7 @@
 from rest_framework import status, generics, permissions
 from .permissions import IsReceptionist
 from rest_framework.response import Response
-from .serializers import UserSerializer, PatientProfileSerializer, MedecinProfileSerializer , CustomTokenObtainPairSerializer
+from .serializers import UserSerializer, PatientProfileSerializer, MedecinProfileSerializer , CustomTokenObtainPairSerializer, ChangePasswordSerializer
 from .models import Patient, Medecin, User
 from django.db import transaction
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -99,3 +99,27 @@ class ReceptionistSignupPatientView(generics.CreateAPIView):
             'access': str(refresh.access_token),
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_201_CREATED)
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        # customized update for non-model serializer usage if customized, 
+        # but here we use UpdateAPIView with get_object returning user.
+        # But UpdateAPIView expects a model serializer usually or we handle it manually.
+        # Actually simplest is to override update or use instance from get_object
+        
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        # Pass instance to update
+        self.perform_update(serializer) 
+        
+        return Response({"detail": "Password updated successfully"}, status=status.HTTP_200_OK)
+
+    def perform_update(self, serializer):
+        serializer.update(self.request.user, serializer.validated_data)

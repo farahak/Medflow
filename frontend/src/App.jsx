@@ -21,6 +21,8 @@ import ReceptionistAppointments from './pages/ReceptionistAppointments'
 import ReceptionistDoctors from './pages/ReceptionistDoctors'
 import InvoiceGeneration from './pages/InvoiceGeneration'
 import InvoiceList from './pages/InvoiceList'
+import Profile from './pages/Profile'
+import Messaging from './pages/Messaging'
 
 function App() {
   return (
@@ -111,6 +113,23 @@ function App() {
           <Route path="/addAppointments" element={
             <ProtectedRoute allowedRoles={['patient']}>
               <Appointment />
+            </ProtectedRoute>
+          } />
+
+          {/* Profile & Messaging Routes */}
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/messages" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Messaging />
+              </DashboardLayout>
             </ProtectedRoute>
           } />
 
